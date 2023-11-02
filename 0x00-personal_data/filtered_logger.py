@@ -4,6 +4,8 @@
 from typing import List
 import re
 import logging
+import mysql.connector
+import os
 
 
 class RedactingFormatter(logging.Formatter):
