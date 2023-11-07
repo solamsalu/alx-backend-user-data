@@ -68,7 +68,7 @@ class BasicAuth(Auth):
     def user_object_from_credentials(
             self, user_email: str, user_pwd: str) -> TypeVar('User'):
         """Return the User instance based on email and password."""
-         if not all(map(lambda x: isinstance(x, str), (user_email, user_pwd))):
+        if not all(map(lambda x: isinstance(x, str), (user_email, user_pwd))):
             return None
         try:
             # Search for the user in the database
