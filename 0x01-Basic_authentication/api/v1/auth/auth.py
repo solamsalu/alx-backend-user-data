@@ -2,28 +2,40 @@
 """
 Module for authentication
 """
+from tabnanny import check
 from flask import request
-from typing import List, TypeVar
-
-
+from typing import TypeVar, List
 User = TypeVar('User')
+
+
 class Auth:
+    """
+    a class to manage the API authentication
+    """
+
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """Determine if the path requires authentication."""
-        if not excluded_paths or not path:
+        """
+        returns False - path and excluded_paths
+        """
+        check = path
+        if path is None or excluded_paths is None or len(excluded_paths) == 0:
             return True
-        path = path if path.endswith('/') else path + '/'
-        for excluded_path in excluded_paths:
-            if path.startswith(excluded_path.strip("*")):
-                return False
+        if path[-1] != "/":
+            check += "/"
+        if check in excluded_paths or path in excluded_paths:
+            return False
         return True
 
     def authorization_header(self, request=None) -> str:
-        """Get the authorization header from the request."""
-        if not request or 'Authorization' not in request.headers:
+        """
+        returns None - request
+        """
+        if request is None:
             return None
-        return request.headers.get('Authorization')
+        return request.headers.get("Authorization")
 
     def current_user(self, request=None) -> User:
-        """Get the current user from the request."""
-        return None  # This method will be implemented later
+        """
+        returns None - request
+        """
+        return None
