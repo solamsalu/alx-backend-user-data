@@ -1,25 +1,28 @@
-#!/usr/bin/env python3
-"""
-Module for authentication
-"""
-from flask import request
-from typing import List, TypeVar
-
-
-User = TypeVar('User')
-
+from typing import List
 
 class Auth:
-    """Template for all authentication system implemented in this app. """
+    # ... other methods ...
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """Determine if the path requires authentication."""
-        return False  # This method will be implemented later
+        """Check if the current path requires authentication."""
+        # Returns True if path is None
+        if path is None:
+            return True
 
-    def authorization_header(self, request=None) -> str:
-        """Get the authorization header from the request."""
-        return None  # This method will be implemented later
+        # Returns True if excluded_paths is None or empty
+        if excluded_paths is None or len(excluded_paths) == 0:
+            return True
 
-    def current_user(self, request=None) -> User:
-        """Get the current user from the request."""
-        return None  # This method will be implemented later
+        # Add a slash at the end of the path if not present for slash tolerance
+        if path[-1] != '/':
+            path += '/'
+
+        # Check if the path is in the list of excluded paths
+        for pattern in excluded_paths:
+            # We assume excluded_paths contains paths ending with a '/'
+            # We can use the endswith method to check for a match
+            if path.endswith(pattern):
+                return False
+
+        # If we get here, the path is not in excluded_paths
+        return True
