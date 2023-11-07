@@ -12,6 +12,7 @@ User = TypeVar('User')
 class Auth:
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """Determine if the path requires authentication."""
+        """Determine if the path requires authentication."""
         # Returns True if path is None
         if path is None:
             return True
@@ -20,14 +21,15 @@ class Auth:
         if not excluded_paths:
             return True
 
-        # Normalize the path to ensure slash tolerance
-        path = path.strip('/')
+        # Ensure the path has a trailing slash for comparison
+        if not path.endswith('/'):
+            path += '/'
 
         for pattern in excluded_paths:
-            # Assuming excluded_paths contains paths ending with a '/',
-            # we normalize them by stripping the slash
-            pattern = pattern.rstrip('/')
-            if path == pattern or path.startswith(pattern + '/'):
+            # Ensure the pattern has a trailing slash for comparison
+            if not pattern.endswith('/'):
+                pattern += '/'
+            if path == pattern:
                 return False
 
         # If the path is not in excluded_paths, return True
