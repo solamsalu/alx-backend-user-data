@@ -7,33 +7,28 @@ from typing import List, TypeVar
 
 
 User = TypeVar('User')
-
-
 class Auth:
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """Determine if the path requires authentication."""
-        # If path is None, return True
-        if not path:
+        # Returns True if path is None
+        if path is None:
             return True
-        # If excluded_paths is None or empty, return True
+
+        # Returns True if excluded_paths is None or empty
         if not excluded_paths:
             return True
-        # Remove the trailing slash from the path
-        path = path.rstrip("/")
-        # Check if path is in excluded_paths and return False if path is
-        # in excluded_paths
-        # Loop through excluded paths
-        for excluded_path in excluded_paths:
-            # Check if given path starts with excluded path, with * at the end
-            if excluded_path.endswith("*") and \
-                    path.startswith(excluded_path[:-1]):
-                # Return False if path starts with excluded path with * at end
+
+        # Normalize the path to ensure slash tolerance
+        path = path.strip('/')
+
+        for pattern in excluded_paths:
+            # Assuming excluded_paths contains paths ending with a '/',
+            # we normalize them by stripping the slash
+            pattern = pattern.rstrip('/')
+            if path == pattern or path.startswith(pattern + '/'):
                 return False
-            # Check if the given path is equal to the excluded path
-            elif path == excluded_path.rstrip("/"):
-                # Return False if the path is equal to the excluded path
-                return False
-        # If path is not in excluded_paths, return True
+
+        # If the path is not in excluded_paths, return True
         return True
 
     def authorization_header(self, request=None) -> str:
