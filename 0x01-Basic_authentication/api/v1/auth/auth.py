@@ -1,28 +1,30 @@
-from typing import List
+#!/usr/bin/env python3
+"""
+Module for authentication
+"""
+from flask import request
+from typing import List, TypeVar
 
+User = TypeVar('User')
 class Auth:
-    # ... other methods ...
-
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """Check if the current path requires authentication."""
-        # Returns True if path is None
-        if path is None:
+        """Determine if the path requires authentication."""
+        if path is None or not excluded_paths:
             return True
 
-        # Returns True if excluded_paths is None or empty
-        if excluded_paths is None or len(excluded_paths) == 0:
-            return True
-
-        # Add a slash at the end of the path if not present for slash tolerance
-        if path[-1] != '/':
-            path += '/'
-
-        # Check if the path is in the list of excluded paths
+        # Normalize the path to ensure slash tolerance
+        path = path.strip('/')
         for pattern in excluded_paths:
-            # We assume excluded_paths contains paths ending with a '/'
-            # We can use the endswith method to check for a match
-            if path.endswith(pattern):
+            # Normalize the pattern to ensure slash tolerance
+            pattern = pattern.strip('/')
+            if path == pattern or path.startswith(pattern + '/'):
                 return False
-
-        # If we get here, the path is not in excluded_paths
         return True
+
+    def authorization_header(self, request=None) -> str:
+        """Get the authorization header from the request."""
+        return None  # This method will be implemented later
+
+    def current_user(self, request=None) -> User:
+        """Get the current user from the request."""
+        return None  # This method will be implemented later
