@@ -6,11 +6,12 @@ from flask import request
 from typing import List, TypeVar
 
 
-User = TypeVar('User')  # This will be replaced with actual user model/class later
+User = TypeVar('User')
+
 
 class Auth:
-    """Template for all authentication system implemented in this app.
-    """
+    """Template for all authentication system implemented in this app. """
+
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """Determine if the path requires authentication."""
         return False  # This method will be implemented later
