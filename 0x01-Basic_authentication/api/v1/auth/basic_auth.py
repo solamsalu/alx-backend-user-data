@@ -68,19 +68,41 @@ class BasicAuth(Auth):
     def user_object_from_credentials(
             self, user_email: str, user_pwd: str) -> TypeVar('User'):
         """Return the User instance based on email and password."""
-        if user_email is None or not isinstance(user_email, str):
+         if not all(map(lambda x: isinstance(x, str), (user_email, user_pwd))):
             return None
-        if user_pwd is None or not isinstance(user_pwd, str):
+        try:
+            # Search for the user in the database
+            user = User.search(attributes={'email': user_email})
+        except Exception:
             return None
+        # Return None if there is no user in the database with the given email
+        if not user:
+            return None
+        # Get the first user from the search results
+        user = user[0]
+        # Return None if the password is invalid
+        if not user.is_valid_password(user_pwd):
+            return None
+        # Return the user instance
+        return user
 
-        users = User.search({'email': user_email})
+    def current_user(self, request=None) -> TypeVar('User'):
+        """Retrieves the User instance for a request.
 
-        if not users:
-            return None
+        Args:
+            request (:obj:`Request`, optional): The request object. Defaults
+            to None.
 
-        # Verify user password
-        user = users[0]
-        if user.is_valid_password(user_pwd):
-            return user
-        else:
-            return None
+        Returns:
+            User: The User instance based on the request.
+        """
+        # Get the authorization header from the request
+        auth_header = self.authorization_header(request)
+        # Extract the Base64 encoded string from the authorization header
+        b64_auth_header = self.extract_base64_authorization_header(auth_header)
+        # Decode the Base64 encoded string
+        dec_header = self.decode_base64_authorization_header(b64_auth_header)
+        # Extract the user email and password from the decoded Base64 string
+        user_email, user_pwd = self.extract_user_credentials(dec_header)
+        # Return the User instance based on the user email and password
+        return self.user_object_from_credentials(user_email, user_pwd)
