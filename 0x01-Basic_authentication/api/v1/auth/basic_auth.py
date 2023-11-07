@@ -64,3 +64,22 @@ class BasicAuth(Auth):
         decoded = self.decode_base64_authorization_header(b64header)
         user_creds = self.extract_user_credentials(decoded)
         return self.user_object_from_credentials(*user_creds)
+
+    def user_object_from_credentials(self, user_email: str, user_pwd: str) -> User:
+        """Return the User instance based on email and password."""
+        if user_email is None or not isinstance(user_email, str):
+            return None
+        if user_pwd is None or not isinstance(user_pwd, str):
+            return None
+
+        users = User.search({'email': user_email})
+        
+        if not users:
+            return None
+        
+        # Verify user password
+        user = users[0]  # Assuming the search returns a list and we take the first match
+        if user.is_valid_password(user_pwd):
+            return user
+        else:
+            return None
