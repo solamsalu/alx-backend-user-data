@@ -3,14 +3,12 @@
 """DB module
 """
 from sqlalchemy import create_engine
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.session import Session
-from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
-
-from user import User
-from user import Base
+from sqlalchemy.orm.session import Session
+from user import User, Base
 
 
 class DB:
@@ -51,6 +49,6 @@ class DB:
             self._session.commit()
         except Exception:
             self._session.rollback()
-            new_user = None
+            raise
 
         return new_user
