@@ -42,13 +42,8 @@ class DB:
         Returns:
             User: The created User instance.
         """
-        with self._session as session:
-            new_user = User(email=email, hashed_password=hashed_password)
-            try:
-                session.add(new_user)
-                session.commit()
-            except IntegrityError:
-                session.rollback()
-                raise  # Reraise the exception
+        user = User(email=email, hashed_password=hashed_password)
+        self._session.add(user)
+        self._session.commit()
 
-        return new_user
+        return user
