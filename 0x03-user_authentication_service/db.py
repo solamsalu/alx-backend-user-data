@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!C:\Users\wku\AppData\Local\Programs\Python\python310\python.exe
 
 """DB module
 """
@@ -6,7 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
 
 from user import User
 from user import Base
@@ -48,8 +49,7 @@ class DB:
         try:
             self._session.add(new_user)
             self._session.commit()
-        except IntegrityError:
-            # Handle integrity errors (e.g., duplicate email) if needed
+        except Exception:
             self._session.rollback()
             new_user = None
 
