@@ -3,7 +3,7 @@
 """DB module
 """
 from sqlalchemy import create_engine
-from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError, IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
@@ -42,13 +42,13 @@ class DB:
         Returns:
             User: The created User instance.
         """
-        new_user = User(email=email, hashed_password=hashed_password)
-
-        try:
-            self._session.add(new_user)
-            self._session.commit()
-        except Exception:
-            self._session.rollback()
-            raise
+        with self._session as session:
+            new_user = User(email=email, hashed_password=hashed_password)
+            try:
+                session.add(new_user)
+                session.commit()
+            except IntegrityError:
+                session.rollback()
+                raise  # Reraise the exception
 
         return new_user
