@@ -1,4 +1,4 @@
-#!C:\Users\wku\AppData\Local\Programs\Python\python310\python.exe
+#!/usr/bin/env python3
 
 """DB module
 """
